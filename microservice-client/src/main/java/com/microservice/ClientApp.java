@@ -12,6 +12,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.DefaultOAuth2ClientContext;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
@@ -40,16 +42,19 @@ public class ClientApp {
 
 	@Bean
 	protected OAuth2ProtectedResourceDetails resource() {
+		
+		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 		ResourceOwnerPasswordResourceDetails details = new ResourceOwnerPasswordResourceDetails();
 		details.setAccessTokenUri("http://localhost:9090/oauth/token");
 		details.setClientId("sami");
-		details.setClientSecret("{noop}sami");
+		details.setClientSecret(encoder.encode("sami"));
 		details.setGrantType("password");
 		return details;
 	}
 
 	@RequestMapping("/execute")
 	public String execute(Principal principal) throws URISyntaxException {
+		
 		User user = (User) ((Authentication) principal).getPrincipal();
 		URI uri = new URI("http://localhost:9090/hello");
 		RequestEntity<String> request = new RequestEntity<String>(HttpMethod.POST, uri);
@@ -58,4 +63,5 @@ public class ClientApp {
 		accessTokenRequest.set("password", user.getPassword());
 		return restTemplate.exchange(request, String.class).getBody();
 	}
+	
 }

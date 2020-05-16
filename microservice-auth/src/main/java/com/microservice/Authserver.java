@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableResourceServer
 @SpringBootApplication
 @EnableAuthorizationServer
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class Authserver {
 
 	public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class Authserver {
 	}
 
 	@GetMapping("/hello")
-	@PreAuthorize("hasRole('ADMIN')")
+	//@PreAuthorize("hasRole('ADMIN')")
 	public String hello() {
 		return "Hello From Resource Server";
 	}
